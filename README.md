@@ -15,5 +15,5 @@
 ### Many of the program's activities involve creating documents and reports. For this reason, not all tasks are included in this repository, as it is specifically focused on code-based assignments.
 
 ### This repository contains the tasks from both stages of the Embarcatech program. The codes were developed using the BitDogLab development board, with the presence of a Raspberry Pi Pico W microcontroller. The environment used to create the code was VS Code, making use of the extension for programming using the Raspberry Pico.
-## `01.` [Foundational Stage](Nivelamento)
-## `02.` [Residency Track](Residencia)
+### `01.` [Foundational Stage](Foundational-Stage)
+### `02.` [Residency Track](Residency-Track)
