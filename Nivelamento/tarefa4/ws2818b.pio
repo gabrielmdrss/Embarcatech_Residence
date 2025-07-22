@@ -1,0 +1,32 @@
+//// filepath: c:\Users\pc gamer\OneDrive\Documentos\ws_vscode\virtus\libraries\ws2818b.pio
+.program ws2818b
+.side_set 1
+
+; Transmite um bit de WS2812 a partir do OSR
+loop:
+    out x, 1     side 0 [2]     ; Sai 1 bit do OSR
+    jmp !x, do_zero side 1 [1]  ; Se for 0, salto
+    jmp loop     side 1 [4]     ; Se for 1, tempo maior em nível alto
+do_zero:
+    nop          side 0 [4]     ; Se for 0, tempo maior em nível baixo
+
+% c-sdk {
+#include "hardware/clocks.h"
+
+static inline void ws2818b_program_init(PIO pio, uint sm, uint offset, uint pin, float freq) {
+    pio_gpio_init(pio, pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    
+    // Configuração do programa.
+    pio_sm_config c = ws2818b_program_get_default_config(offset);
+    sm_config_set_sideset_pins(&c, pin); // Usa o pino de sideset.
+    sm_config_set_out_shift(&c, true, true, 8); // 8 bits, deslocamento à direita.
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX); // Usa apenas FIFO de TX.
+    float prescaler = clock_get_hz(clk_sys) / (10.f * freq); // 10 ciclos por bit.
+    sm_config_set_clkdiv(&c, prescaler);
+    
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
+
